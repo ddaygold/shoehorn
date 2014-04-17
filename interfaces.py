@@ -29,3 +29,11 @@ def make_interface(num=1):
 	for i in range(num):
 		mac = r.srandmember("MACS")
 		make_macvlan(mac)
+
+def make_ifacesUpTo(num=0):
+	r = redis.StrictRedis(host='localhost', db=1)
+	while len(get_macvlans()) < num:
+		mac = r.srandmember("MACS")
+		make_macvlan(mac)
+
+	
