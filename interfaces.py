@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 import pyiface
 import subprocess
 import redis
+import argparse
 
 def get_macvlans():
 	a = pyiface.getIfaces()
@@ -36,4 +37,11 @@ def make_ifacesUpTo(num=0):
 		mac = r.srandmember("MACS")
 		make_macvlan(mac)
 
-	
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-n","--number",default=0)
+    args = parser.parse_args()
+    make_ifacesUpTo(int(args.number))
+
+if __name__ == "__main__":
+    main()
