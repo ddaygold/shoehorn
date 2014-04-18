@@ -11,8 +11,13 @@ def get_macvlans():
 def make_macvlan(mac):
 	name = "mac"+str(get_lowestIfaceNum())
 	subprocess.check_call(["ip","link","add","link","eth0",name,"address",mac,"type","macvlan"])
-	subprocess.check_call(["ifconfig",name,"up"])
+	subprocess.check_call(["ip","link","set",name,"up"])
 	subprocess.check_call(["dhclient",name])
+
+def remove_macvlan(iface):
+	subprocess.check_call(["ip","link","set",iface,"down"])
+	subprocess.check_call(["dhclient","-r",iface])
+	subprocess.check_call(["ip","link","delete",iface])
 
 def get_lowestIfaceNum():
 	#sort list
@@ -38,10 +43,13 @@ def make_ifacesUpTo(num=0):
 		make_macvlan(mac)
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-n","--number",default=0)
-    args = parser.parse_args()
-    make_ifacesUpTo(int(args.number))
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-n","--number",default=0)
+	parser.add_argument("-r","--remove",default=0)
+	args = parser.parse_args()
+	make_ifacesUpTo(int(args.number))
+	remove_macvlan(args.remove)
+
 
 if __name__ == "__main__":
-    main()
+	main()
